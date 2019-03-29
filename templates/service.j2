@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+[Unit]
+Description={{ item.key }} (runs {{ item.value.binary }})
+After=network.target
+Wants=network.target
+
+[Service]
+ExecStart=/usr/local/bin/{{ item.value.binary }}
+WorkingDirectory=/etc/{{ item.key }}
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

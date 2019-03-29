@@ -1,0 +1,31 @@
+---
+# This task file assumes that {{ item.key }} is the name and {{ item.value }}
+# the value of a [service object](../README.md#service-objects)
+
+- name: Create {{ item.key }} working directory
+  file:
+    path: /etc/{{ item.key }}
+    state: directory
+
+- name: Convert {{ item.key }} config
+  command:
+  args:
+    stdin: "{{ item.value.config | to_json }}"
+    argv:
+      - /usr/bin/python3
+      - -c
+      - import json, sys, toml; toml.dump(json.load(sys.stdin), sys.stdout)
+  register: rust_deploy_temp_json_to_toml
+  changed_when: False
+
+- name: Write {{ item.key }} config
+  copy:
+    content: "{{ rust_deploy_temp_json_to_toml.stdout }}"
+    dest: /etc/{{ item.key }}/{{ item.value.binary }}.toml
+  notify: Restart services
+
+- name: Create {{ item.key }} service
+  template:
+    src: service.j2
+    dest: /etc/systemd/system/{{ item.key }}.service
+  notify: Restart services

@@ -1,0 +1,22 @@
+---
+# This task file assumes that {{ item.key }} is the name and {{ item.value }}
+# the value of a [crate object](../README.md#crate-objects)
+
+- set_fact:
+    rust_deploy_temp_target_dir: "/opt/{{ item.key }}-{{ item.value.version[:10] }}-{{ item.value.checksum.split(':')[-1][:40] }}/bin"
+
+- name: Check if the desired {{ item.key }} version exists
+  stat:
+    path: "{{ rust_deploy_temp_target_dir }}/{{ item.key }}"
+  register: rust_deploy_temp_executable_stat
+
+- include_tasks: deploy.yml
+  when: not rust_deploy_temp_executable_stat.stat.exists
+
+- name: Install {{ item.key }}
+  file:
+    path: /usr/local/bin/{{ item.key }}
+    state: link
+    force: True
+    src: "{{ rust_deploy_temp_target_dir }}/{{ item.key }}"
+  notify: Restart services

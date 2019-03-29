@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: haslersn
+  description: Installs Rust crates and creates systemd services running the installed binaries
+  company: stuvus (https://stuvus.uni-stuttgart.de)
+
+  license: MIT
+
+  min_ansible_version: 2.4
+
+  platforms:
+    - name: Debian
+    - name: Ubuntu
+
+  galaxy_tags:
+    - rust
+    - crate
+    - systemd
+
+dependencies: []

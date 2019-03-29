@@ -1,0 +1,11 @@
+---
+- name: Install dependencies
+  apt:
+    name:
+      - python3-toml
+
+- include_tasks: install.yml
+  loop: "{{ rust_deploy_crates | default({}) | dict2items }}"
+
+- include_tasks: create_service.yml
+  loop: "{{ rust_deploy_services | default({}) | dict2items }}"

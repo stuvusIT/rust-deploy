@@ -1,0 +1,51 @@
+---
+# This task file assumes that {{ item.key }} is the name and {{ item.value }}
+# the value of a [crate object](../README.md#crate-objects)
+
+- name: Install build dependencies
+  apt:
+    name: "{{ item.value.build_dependencies | default([]) }}"
+
+- name: Install toolchain
+  shell: >
+    curl https://sh.rustup.rs -sSf |
+    sh -s -- -y --default-toolchain nightly-$(uname -m)-unknown-linux-gnu &&
+    $HOME/.cargo/bin/rustup default nightly-$(uname -m)-unknown-linux-gnu
+  args:
+    warn: False
+
+- name: Download {{ item.key }} archive
+  get_url:
+    url: "{{ item.value.archive_url | default('https://github.com/' + item.value.github_repo + '/archive/' + item.value.version + '.tar.gz') }}"
+    dest: "{{ global_cache_dir }}/{{ item.key }}-{{ item.value.version }}.tar.gz"
+    checksum: "{{ item.value.checksum }}"
+  become: False
+  delegate_to: localhost
+
+- name: Clear unarchive target directory
+  file:
+    path: /tmp/{{ item.key }}-{{ item.value.version }}
+    state: absent
+
+- name: Unpack {{ item.key }} archive
+  unarchive:
+    src: "{{ global_cache_dir }}/{{ item.key }}-{{ item.value.version }}.tar.gz"
+    dest: /tmp
+
+- name: Compile {{ item.key }}
+  shell: $HOME/.cargo/bin/cargo build --release
+  args:
+    chdir: /tmp/{{ item.key }}-{{ item.value.version }}
+
+- name: Create deployment target directory
+  file:
+    path: "{{ rust_deploy_temp_target_dir }}"
+    state: directory
+
+- name: Deploy {{ item.key }} executable
+  copy:
+    remote_src: true
+    src: /tmp/{{ item.key }}-{{ item.value.version }}/target/release/{{ item.key }}
+    dest: "{{ rust_deploy_temp_target_dir }}/{{ item.key }}"
+    mode: 0755
+  notify: Restart services

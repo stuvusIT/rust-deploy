@@ -1,0 +1,13 @@
+---
+- name: Restart services
+  service:
+    daemon_reload: True
+
+- name: Actually restart services
+  service:
+    name: "{{ item }}"
+    enabled: True
+    force: True
+    state: restarted
+  loop: "{{ rust_deploy_services.keys() | list }}"
+  listen: Restart services
