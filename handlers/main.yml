@@ -1,13 +1,12 @@
 ---
-- name: Restart services
+- name: Reload systemd configuration
   service:
     daemon_reload: True
 
-- name: Actually restart services
+- name: Restart services
   service:
     name: "{{ item }}"
     enabled: True
     force: True
     state: restarted
   loop: "{{ rust_deploy_services.keys() | list }}"
-  listen: Restart services
