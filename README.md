@@ -59,7 +59,7 @@ configuration always yields the same installed software.
 ### Source Specification
 
 There are multiple ways to install a crate.
-Chosing among them is done by providing at exactly one of the following keys per
+Chosing among them is done by providing exactly one of the following keys per
 [crate object](#crate-objects).
 Actually, multiple of those keys can be provided, but then only the one listed here first is
 considered.
