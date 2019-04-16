@@ -1,0 +1,19 @@
+---
+# This task file assumes that {{ item.key }} is the name and {{ item.value }}
+# the value of a [crate object](../README.md#crate-objects)
+
+- name: Create {{ item.key }} target directory
+  file:
+    path: "{{ rust_deploy_temp_target_dir }}"
+    state: directory
+
+- name: Download precompiled binary for {{ item.key }}
+  get_url:
+    url: "{{ item.value.binary_url }}"
+    dest: "{{ rust_deploy_temp_target_dir }}/{{ item.key }}"
+    checksum: "{{ item.value.checksum }}"
+    mode: 0755
+  when: item.value.binary_url is defined
+
+- include_tasks: build.yml
+  when: item.value.binary_url is not defined
