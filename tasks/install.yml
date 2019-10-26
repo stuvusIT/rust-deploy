@@ -2,6 +2,10 @@
 # This task file assumes that {{ item.key }} is the name and {{ item.value }}
 # the value of a [crate object](../README.md#crate-objects)
 
+- name: Install dependencies
+  apt:
+    name: "{{ item.value.dependencies | default([]) }}"
+
 - set_fact:
     rust_deploy_temp_target_dir: "/opt/{{ item.key }}-{{ item.value.version[:10] }}-{{ item.value.checksum.split(':')[-1][:40] }}/bin"
 

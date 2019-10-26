@@ -33,6 +33,7 @@ A crate object is a dictionary which can contain the following keys.
 | :------------------- | :--------: | :-------------------------------------------------- |
 | `archive_url`        | _optional_ | See [source specification](#source-specification)   |
 | `binary_url`         | _optional_ | See [source specification](#source-specification)   |
+| `dependencies`       |    `[]`    | `apt` packages installed.                           |
 | `build_dependencies` |    `[]`    | `apt` packages installed before building the crate. |
 | `checksum`           | _required_ | Checksum of the downloaded archive or binary.       |
 | `github_repo`        | _optional_ | See [source specification](#source-specification)   |
