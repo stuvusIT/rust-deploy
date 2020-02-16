@@ -1,6 +1,6 @@
 # rust-deploy
 
-This role installs [Rust](https://www.rust-lang.org/) crates (optionally building them using 
+This role installs [Rust](https://www.rust-lang.org/) crates (optionally building them using
 [Cargo](https://doc.rust-lang.org/cargo/)) and creates [systemd](https://wiki.debian.org/systemd)
 services running the installed binaries.
 
@@ -23,7 +23,7 @@ For more information, see [crate objects](#crate-objects).
 
 The distinction between crates and services exists because multiple services can run the same
 binary.
-That binary then only needs to be installed once (i.e. by one crate). 
+That binary then only needs to be installed once (i.e. by one crate).
 
 ### Crate Objects
 
@@ -74,7 +74,7 @@ considered.
   The downloaded archive must contain a folder named `{{ crate_name }}-{{ version }}` which contains
   in turn the source that can be compiled with `cargo build`.
   The compilation must yield a binary also named `{{ crate_name }}` which is then installed.
-* `github_repo`: 
+* `github_repo`:
   Short form for `archive_url: https://github.com/{{ github_repo }}/archive/{{ version }}.tar.gz`.
 
 Hereby `crate_name` is the key of the crate object itself in `rust_deploy_crates` and `version` is
