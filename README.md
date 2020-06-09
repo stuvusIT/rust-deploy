@@ -83,12 +83,12 @@ the respective value inside that crate object.
 ### Service Objects
 
 A service object is a dictionary which can contain the following keys.
-All of them are _required_.
 
-| Key      |            | Description                                               |
+| Key      |  Default   | Description                                               |
 | :------- | :--------: | :-------------------------------------------------------- |
 | `binary` | _required_ | The service runs the binary `/usr/local/bin/{{ binary }}` |
 | `config` | _required_ | See [service configuration](#service-configuration)       |
+| `args`   |    `[]`    | A list of cmd line args to pass to the binary             |
 
 ### Service Configuration
 

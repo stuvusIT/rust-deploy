@@ -5,7 +5,7 @@ After=network.target
 Wants=network.target
 
 [Service]
-ExecStart=/usr/local/bin/{{ item.value.binary }}
+ExecStart=/usr/local/bin/{{ item.value.binary }} {{ (item.value.args | default([])) | join(' ') }} 
 WorkingDirectory=/etc/{{ item.key }}
 Restart=always
 RestartSec=10
