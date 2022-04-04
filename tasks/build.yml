@@ -22,20 +22,16 @@
   become: False
   delegate_to: localhost
 
-- name: Clear unarchive target directory
-  file:
-    path: /tmp/{{ item.key }}-{{ item.value.version }}
-    state: absent
-
 - name: Unpack {{ item.key }} archive
   unarchive:
     src: "{{ global_cache_dir }}/{{ item.key }}-{{ item.value.version }}.tar.gz"
-    dest: /tmp
+    dest: /var/tmp
+    creates: /var/tmp/{{ item.key }}-{{ item.value.version }}
 
 - name: Compile {{ item.key }}
   shell: $HOME/.cargo/bin/cargo build --release
   args:
-    chdir: /tmp/{{ item.key }}-{{ item.value.version }}
+    chdir: /var/tmp/{{ item.key }}-{{ item.value.version }}
 
 - name: Create deployment target directory
   file:
@@ -45,7 +41,12 @@
 - name: Deploy {{ item.key }} executable
   copy:
     remote_src: true
-    src: /tmp/{{ item.key }}-{{ item.value.version }}/target/release/{{ item.key }}
+    src: /var/tmp/{{ item.key }}-{{ item.value.version }}/target/release/{{ item.key }}
     dest: "{{ rust_deploy_temp_target_dir }}/{{ item.key }}"
     mode: 0755
   notify: Restart services
+
+- name: Delete build folder of {{ item.key }}
+  file:
+    path: /var/tmp/{{ item.key }}-{{ item.value.version }}
+    state: absent
