@@ -22,15 +22,11 @@
   become: False
   delegate_to: localhost
 
-- name: Clear unarchive target directory
-  file:
-    path: /var/tmp/{{ item.key }}-{{ item.value.version }}
-    state: absent
-
 - name: Unpack {{ item.key }} archive
   unarchive:
     src: "{{ global_cache_dir }}/{{ item.key }}-{{ item.value.version }}.tar.gz"
     dest: /var/tmp
+    creates: /var/tmp/{{ item.key }}-{{ item.value.version }}
 
 - name: Compile {{ item.key }}
   shell: $HOME/.cargo/bin/cargo build --release
